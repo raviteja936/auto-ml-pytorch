@@ -1,0 +1,22 @@
+
+{
+    "layout": {
+        "target": "bandgap_energy_ev",
+        "numeric": ["number_of_total_atoms", "percent_atom_al", "percent_atom_ga",
+            "percent_atom_in", "lattice_vector_1_ang", "lattice_vector_2_ang", "lattice_vector_3_ang", "lattice_angle_alpha_degree", "lattice_angle_beta_degree",
+            "lattice_angle_gamma_degree"],
+        "categorical": ["spacegroup"]
+        },
+    "train_path": "./data/train.csv",
+    "test_path": "./data/test.csv",
+    "dense_layers": [[128, "relu"], [128, "relu"], [1]],
+    "loss": "MeanSquaredError",
+    "optimizer": "adam",
+    "metrics": ["mse"],
+    "learning_rate": 1e-3,
+    "batch_size": 32,
+    "num_epochs": 2,
+    "dropout_rate": 0.3,
+
+    "save_summary_steps": 100
+}
