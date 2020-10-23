@@ -2,6 +2,7 @@ from __future__ import print_function, division
 import torch
 from torch.utils.data import Dataset
 import pandas as pd
+import numpy as np
 
 
 class CustomDataset(Dataset):
@@ -25,8 +26,8 @@ class CustomDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        x = self.df.loc[idx, self.df.columns != self.features['label']]
-        y = self.df.loc[idx, self.df.columns == self.features['label']]
+        x = torch.tensor(self.df.loc[idx, self.df.columns != self.features['target']].values).type(torch.float)
+        y = torch.tensor(self.df.loc[idx, self.df.columns == self.features['target']].values).type(torch.float)
         sample = {'x': x, 'y': y}
         if self.transform:
             sample = self.transform(sample)
@@ -37,7 +38,6 @@ if __name__ == "__main__":
     f = {"target": "bandgap_energy_ev", "numeric": ["lattice_vector_1_ang", "lattice_vector_2_ang", "lattice_vector_3_ang"],
                          "categorical": ["spacegroup"]}
     dataset = CustomDataset("./data/train.csv", f)
-    # , 18, 6, 4, 25, 23
     sample = dataset[1, 2, 3]
     print(sample['x'].shape, sample['y'].shape)
     print(len(dataset))

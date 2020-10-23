@@ -1,13 +1,11 @@
 import sys
-# import tensorflow as tf
-# from matplotlib.plt import pyplot
-import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
-from utils.cli import CliArgs
-from pipes.pipeline import DataPipe
+from src.utils.cli import CliArgs
+from src.pipes.pipeline import DataPipe
+from src.models.ffnn import Net
+from src.train.trainloop import TrainLoop
 
 
 def experiment(args):
@@ -15,20 +13,17 @@ def experiment(args):
     params = args.get_params()
     pipe = DataPipe(params, "train")
     train_data, val_data = pipe.build()
-    print(len(train_data), len(val_data))
-    # model = Model(params)
-    # model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredError(), metrics=['mse'])
-    # history = model.fit(train_data, epochs=20)
-    # predictions = model.predict(test_data)
+    net = Net(params, train_data[1]['x'].shape[0])
+    train_loader = DataLoader(train_data, batch_size=params.batch_size, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_data, batch_size=params.batch_size, shuffle=False, num_workers=0)
 
-    # Show some results
-    # for prediction, actual in zip(predictions[:10], list(test_data)[0][1][:10]):
-    #     print("Predicted outcome: ", prediction[0], " | Actual outcome: ", actual.numpy())
-    # plot metrics
-    # pyplot.plot(history.history['mse'])
-    # pyplot.show()
+    loss_fn = getattr(nn, params.loss)()
+    optimizer = getattr(optim, params.optimizer)(net.parameters(), lr=params.learning_rate, momentum=params.momentum)
 
-    return
+    print_every = int(len(train_data) / (10 * params.batch_size))
+    train = TrainLoop(net, train_loader, optimizer, loss_fn, val_loader=val_loader,
+                      print_every=print_every)
+    train.fit(params.num_epochs)
 
 
 if __name__ == "__main__":
