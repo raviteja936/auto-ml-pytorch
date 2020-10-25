@@ -24,7 +24,6 @@ class TrainLoop:
                 inputs, labels = data['x'], data['y']
                 self.optimizer.zero_grad()
                 outputs = self.model(inputs)
-
                 loss = self.loss_fn(outputs, labels)
                 loss.backward()
                 self.optimizer.step()

@@ -1,23 +1,21 @@
 
 {
     "layout": {
-        "target": "bandgap_energy_ev",
-        "numeric": ["number_of_total_atoms", "percent_atom_al", "percent_atom_ga",
-            "percent_atom_in", "lattice_vector_1_ang", "lattice_vector_2_ang", "lattice_vector_3_ang", "lattice_angle_alpha_degree", "lattice_angle_beta_degree",
-            "lattice_angle_gamma_degree"],
-        "categorical": ["spacegroup"]
+        "target": "target",
+        "numeric": ["age", "trestbps", "chol", "thalach", "oldpeak", "slope", "ca", "thal"],
+        "categorical": ["sex", "cp", "fbs", "restecg", "exang"]
         },
-    "train_path": "./data/train.csv",
-    "test_path": "./data/test.csv",
-    "dense_layers": [128, 128, 128],
+    "delimiter": ",",
+    "train_path": "./data/uci_heart/heart.csv",
+    "dense_layers": [32, 64, 32],
     "out_dim": 2,
-    "loss": "MSELoss",
+    "loss": "CrossEntropyLoss",
     "optimizer": "SGD",
     "metrics": ["mse"],
     "learning_rate": 0.001,
     "momentum": 0.9,
     "batch_size": 32,
-    "num_epochs": 2,
+    "num_epochs": 1,
     "dropout_rate": 0.3,
     "save_summary_steps": 100
 }
