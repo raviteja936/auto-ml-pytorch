@@ -11,7 +11,6 @@ class Net(nn.Module):
         out_dim = params.out_dim
 
         self.layers = []
-        # self.layers = [pipe_joint(params.train_path, params.layout["numeric"], params.layout["categorical"])]
         self.layers.append(nn.Linear(in_dim, n_units[0]))
         curr_dim = n_units[0]
         for i in range(1, len(n_units)):

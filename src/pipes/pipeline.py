@@ -50,7 +50,7 @@ class DataPipe:
 
             self.length = len(train_data)
             self.width = train_data[0]['x'].shape[0]
-            # print(self.length, self.width)
+            print(self.length, self.width)
 
             train_loader = DataLoader(train_data, batch_size=self.params.batch_size, shuffle=True, num_workers=0)
             val_loader = DataLoader(val_data, batch_size=self.params.batch_size, shuffle=False, num_workers=0)
@@ -81,11 +81,13 @@ class DataPipe:
         df = df.dropna(axis=0, how="any")
         return df
 
-    def num_preprocess(self, df):
-        df = df.clip(lower=self.num_kwargs["q1"], upper=self.num_kwargs["q99"], axis=1)
-        df = (df - self.num_kwargs["mean"]) / (0.001 + self.num_kwargs["std"])
-        return df
+    def num_preprocess(self, df_num):
+        df_num = df_num.clip(lower=self.num_kwargs["q1"], upper=self.num_kwargs["q99"], axis=1)
+        df_num = (df_num - self.num_kwargs["mean"]) / (0.001 + self.num_kwargs["std"])
+        return df_num
 
-    def cat_preprocess(self, df):
-        return df
-
+    def cat_preprocess(self, df_cat):
+        for col in df_cat.columns:
+            df_cat = pd.concat([df_cat, pd.get_dummies(df_cat[col], prefix=col)], axis=1)
+            del df_cat[col]
+        return df_cat

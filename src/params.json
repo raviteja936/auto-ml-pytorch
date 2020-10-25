@@ -7,15 +7,15 @@
         },
     "delimiter": ",",
     "train_path": "./data/uci_heart/heart.csv",
-    "dense_layers": [32, 64, 32],
+    "dense_layers": [16, 256, 128],
     "out_dim": 2,
     "loss": "CrossEntropyLoss",
     "optimizer": "SGD",
     "metrics": ["mse"],
     "learning_rate": 0.001,
     "momentum": 0.9,
-    "batch_size": 32,
-    "num_epochs": 1,
+    "batch_size": 1,
+    "num_epochs": 10,
     "dropout_rate": 0.3,
     "save_summary_steps": 100
 }

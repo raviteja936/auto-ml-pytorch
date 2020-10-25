@@ -9,7 +9,6 @@ class CustomDataset(Dataset):
         self.df = df
         self.features = features
         self.transform = transform
-        # print(df.shape)
 
     def __len__(self):
         return self.df.shape[0]
