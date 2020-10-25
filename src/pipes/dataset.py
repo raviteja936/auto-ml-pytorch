@@ -1,8 +1,6 @@
 from __future__ import print_function, division
 import torch
 from torch.utils.data import Dataset
-import pandas as pd
-import numpy as np
 
 
 class CustomDataset(Dataset):
