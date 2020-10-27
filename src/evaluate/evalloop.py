@@ -3,6 +3,7 @@ import torch
 class EvalLoop:
     def __init__(self, model, dataloader):
         self.model = model
+        self.model.eval()
         self.dataloader = dataloader
 
     def predict(self):
@@ -10,6 +11,7 @@ class EvalLoop:
         correct = 0
         nb_classes = 2
         confusion_matrix = torch.zeros(nb_classes, nb_classes)
+
         with torch.no_grad():
             for data in self.dataloader:
                 inputs, labels = data['x'], data['y']

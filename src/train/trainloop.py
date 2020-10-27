@@ -5,6 +5,7 @@ from src.evaluate.evalloop import EvalLoop
 class TrainLoop:
     def __init__(self, model, train_loader, optimizer, loss_fn, val_loader=None, print_every=100):
         self.model = model
+        self.model.train()
         self.train_loader = train_loader
         self.optimizer = optimizer
         self.loss_fn = loss_fn
