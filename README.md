@@ -11,4 +11,11 @@ All hyperparameters are expected to be input using a param.json file.
 
 TODO
 1. Add Recurrent and Conv Nets
-2. Neural architecture search for automated discovery of hyperparameters 
+2. Neural architecture search for automated hyperparameter tuning 
+3. Utils for saving and loading preprocessed data and models
+4. Performance tracking using Tensorboard 
+
+## Training
+
+1. Create params.json (see sample in the repo)
+2. From command line run: `python experiment.py -p params.json`
