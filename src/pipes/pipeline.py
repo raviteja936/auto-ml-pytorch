@@ -40,8 +40,8 @@ class DataPipe:
 
             val_df = self.preprocess(val_df)
             val_df = pd.concat([val_df[self.features["target"]],
-                                  self.num_preprocess(val_df[self.features["numeric"]]),
-                                  self.cat_preprocess(val_df[self.features["categorical"]])], axis=1)
+                                self.num_preprocess(val_df[self.features["numeric"]]),
+                                self.cat_preprocess(val_df[self.features["categorical"]])], axis=1)
 
             print(train_df.shape, val_df.shape)
 
@@ -78,7 +78,8 @@ class DataPipe:
         return num_kwargs
 
     def preprocess(self, df):
-        df = df.dropna(axis=0, how="any")
+        # df = df.dropna(axis=0, how="any")
+        df = df.fillna(0)
         return df
 
     def num_preprocess(self, df_num):

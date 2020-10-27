@@ -1,4 +1,5 @@
 import sys
+import torch
 import torch.nn as nn
 import torch.optim as optim
 from src.utils.cli import CliArgs
@@ -14,7 +15,10 @@ def experiment(args):
     train_loader, val_loader = pipe.build()
 
     net = Net(params, pipe.width)
-    loss_fn = getattr(nn, params.loss)()
+    loss_wt = None
+    if hasattr(params, "loss_weights"):
+        loss_wt = params.loss_weights
+    loss_fn = getattr(nn, params.loss)(torch.FloatTensor(loss_wt))
     optimizer = getattr(optim, params.optimizer)(net.parameters(), lr=params.learning_rate, momentum=params.momentum)
     print_every = int(pipe.length / (2 * params.batch_size))
 
