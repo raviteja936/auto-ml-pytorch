@@ -7,6 +7,7 @@ from src.utils.cli import CliArgs
 class Net(nn.Module):
     def __init__(self, params, in_dim):
         super().__init__()
+        self.params = params
         n_units = params.dense_layers
         out_dim = params.out_dim
 
@@ -22,9 +23,9 @@ class Net(nn.Module):
     def forward(self, x):
         for layer in self.layers:
             # norm = nn.BatchNorm1d(layer.out_features)
-            # dropout = nn.Dropout(0.2)
+            dropout = nn.Dropout(self.params.dropout_rate)
             x = layer(x)
-            # x = dropout(x)
+            x = dropout(x)
             x = F.relu(x)
         x = self.final_layer(x)
         return x
