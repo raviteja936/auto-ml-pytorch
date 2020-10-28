@@ -2,14 +2,18 @@ from src.pipes.dataset import CustomDataset
 from torch.utils.data import DataLoader
 import pandas as pd
 import numpy as np
-# from .preprocess import PackNumericFeatures
+np.random.seed(0)
 
 
 class DataPipe:
-    def __init__(self, params, mode="train"):
+    def __init__(self, params, mode="train", preprocess=True):
         self.params = params
         if mode == "train":
             self.is_training = True
+        else:
+            self.is_training = False
+
+        self.preprocess = preprocess
         self.features = {"target": self.params.layout["target"], "numeric": self.params.layout["numeric"],
                          "categorical": self.params.layout["categorical"]}
         self.num_kwargs = {}
@@ -30,27 +34,24 @@ class DataPipe:
             else:
                 val_df = pd.read_csv(self.params.val_path, usecols=cols, delimiter=delimiter)
 
-            print(train_df.shape, val_df.shape)
-
             self.num_kwargs = self.get_num_kwargs(train_df[self.features["numeric"]])
-            train_df = self.preprocess(train_df)
-            train_df = pd.concat([train_df[self.features["target"]],
-                                  self.num_preprocess(train_df[self.features["numeric"]]),
-                                  self.cat_preprocess(train_df[self.features["categorical"]])], axis=1)
 
-            val_df = self.preprocess(val_df)
-            val_df = pd.concat([val_df[self.features["target"]],
-                                self.num_preprocess(val_df[self.features["numeric"]]),
-                                self.cat_preprocess(val_df[self.features["categorical"]])], axis=1)
+            if self.preprocess:
+                train_df = self.df_preprocess(train_df)
+                train_df = pd.concat([train_df[self.features["target"]],
+                                      self.num_preprocess(train_df[self.features["numeric"]]),
+                                      self.cat_preprocess(train_df[self.features["categorical"]])], axis=1)
 
-            print(train_df.shape, val_df.shape)
+                val_df = self.df_preprocess(val_df)
+                val_df = pd.concat([val_df[self.features["target"]],
+                                    self.num_preprocess(val_df[self.features["numeric"]]),
+                                    self.cat_preprocess(val_df[self.features["categorical"]])], axis=1)
 
             train_data = CustomDataset(train_df, self.features)
             val_data = CustomDataset(val_df, self.features)
 
             self.length = len(train_data)
             self.width = train_data[0]['x'].shape[0]
-            print(self.length, self.width)
 
             train_loader = DataLoader(train_data, batch_size=self.params.batch_size, shuffle=True, num_workers=0)
             val_loader = DataLoader(val_data, batch_size=self.params.batch_size, shuffle=False, num_workers=0)
@@ -58,13 +59,15 @@ class DataPipe:
             return train_loader, val_loader
 
         else:
-            val_df = pd.read_csv(self.params.val_path, usecols=cols, delimiter=delimiter)
-            val_data = CustomDataset(val_df, self.features)
-            val_loader = DataLoader(val_data, batch_size=self.params.batch_size, shuffle=False, num_workers=0)
-            return None, val_loader
+            test_df = pd.read_csv(self.params.test_path, usecols=cols, delimiter=delimiter)
+            test_data = CustomDataset(test_df, self.features)
+            self.length = len(test_data)
+            self.width = test_data[0]['x'].shape[0]
+            test_loader = DataLoader(test_data, batch_size=self.params.batch_size, shuffle=False, num_workers=0)
+            return None, test_loader
 
     def split_dataset(self, df):
-        msk = np.random.rand(len(df)) < 0.7
+        msk = np.random.rand(len(df)) < 0.8
         train_df = df[msk]
         val_df = df[~msk]
         return train_df, val_df
@@ -77,7 +80,7 @@ class DataPipe:
         num_kwargs["std"] = df.std()
         return num_kwargs
 
-    def preprocess(self, df):
+    def df_preprocess(self, df):
         # df = df.dropna(axis=0, how="any")
         df = df.fillna(0)
         return df

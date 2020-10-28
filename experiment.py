@@ -26,6 +26,9 @@ def experiment(args):
                       print_every=print_every)
     train.fit(params.num_epochs)
 
+    if hasattr(params, "out_path"):
+        torch.save(net.state_dict(), params.out_path)
+
 
 if __name__ == "__main__":
     experiment(sys.argv[1:])

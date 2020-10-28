@@ -11,7 +11,7 @@ from src.train.trainloop import TrainLoop
 def experiment(args):
     args = CliArgs(args)
     params = args.get_params()
-    pipe = DataPipe(params, "train")
+    pipe = DataPipe(params, mode="train", preprocess=False)
     train_loader, val_loader = pipe.build()
 
     net = Net(params, pipe.width)
@@ -25,6 +25,9 @@ def experiment(args):
     train = TrainLoop(net, train_loader, optimizer, loss_fn, val_loader=val_loader,
                       print_every=print_every)
     train.fit(params.num_epochs)
+
+    if hasattr(params, "out_path"):
+        torch.save(net.state_dict(), params.out_path)
 
 
 if __name__ == "__main__":
