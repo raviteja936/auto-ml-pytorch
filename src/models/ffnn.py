@@ -12,20 +12,22 @@ class Net(nn.Module):
         out_dim = params.out_dim
 
         self.layers = []
-        self.layers.append(nn.Linear(in_dim, n_units[0]))
+        # norm = nn.BatchNorm1d(layer.out_features)
+        self.layers.append((nn.Linear(in_dim, n_units[0]), nn.BatchNorm1d(n_units[0])))
         curr_dim = n_units[0]
         for i in range(1, len(n_units)):
-            self.layers.append(nn.Linear(curr_dim, n_units[i]))
+            self.layers.append((nn.Linear(curr_dim, n_units[i]), nn.BatchNorm1d(n_units[i])))
 
             curr_dim = n_units[i]
         self.final_layer = nn.Linear(curr_dim, out_dim)
+        self.drop_layer = nn.Dropout(self.params.dropout_rate)
 
     def forward(self, x):
         for layer in self.layers:
-            # norm = nn.BatchNorm1d(layer.out_features)
-            dropout = nn.Dropout(self.params.dropout_rate)
-            x = layer(x)
-            x = dropout(x)
+
+            x = layer[0](x)
+            # x = layer[1](x)
+            x = self.drop_layer(x)
             x = F.relu(x)
         x = self.final_layer(x)
         return x

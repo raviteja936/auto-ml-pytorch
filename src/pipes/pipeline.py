@@ -2,7 +2,7 @@ from src.pipes.dataset import CustomDataset
 from torch.utils.data import DataLoader
 import pandas as pd
 import numpy as np
-np.random.seed(0)
+# np.random.seed(0)
 
 
 class DataPipe:
@@ -67,6 +67,7 @@ class DataPipe:
             return None, test_loader
 
     def split_dataset(self, df):
+        np.random.seed(6)
         msk = np.random.rand(len(df)) < 0.8
         train_df = df[msk]
         val_df = df[~msk]

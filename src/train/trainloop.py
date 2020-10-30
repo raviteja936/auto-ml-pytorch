@@ -17,6 +17,7 @@ class TrainLoop:
 
     def fit(self, epochs=1):
         for epoch in range(epochs):
+            self.model.train()
             running_loss = 0.0
             total_train = 0
             correct_train = 0
@@ -39,6 +40,7 @@ class TrainLoop:
                     running_loss = 0.0
 
             train_accuracy = 100.0 * correct_train/total_train
+            self.model.eval()
             val_accuracy = self.eval.predict()
             print("Epoch %d: Training Accuracy = %d%%,  Validation Accuracy = %d%%" % (epoch+1, train_accuracy, val_accuracy))
 

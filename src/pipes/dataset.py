@@ -16,9 +16,10 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
-        self.df_target = self.df[self.features['target']]
-        x = torch.tensor(self.df.iloc[idx]).type(torch.float)
-        y = torch.tensor(self.df_target.iloc[idx]).type(torch.long)
+        target = self.features['target']
+        columns = self.features['numeric'] + self.features['categorical']
+        x = torch.tensor(self.df[columns].iloc[idx]).type(torch.float)
+        y = torch.tensor(self.df[target].iloc[idx]).type(torch.long)
         sample = {'x': x, 'y': y}
         if self.transform:
             sample = self.transform(sample)

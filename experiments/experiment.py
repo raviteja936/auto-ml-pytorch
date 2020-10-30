@@ -19,7 +19,8 @@ def experiment(args):
     if hasattr(params, "loss_weights"):
         loss_wt = params.loss_weights
     loss_fn = getattr(nn, params.loss)(torch.FloatTensor(loss_wt))
-    optimizer = getattr(optim, params.optimizer)(net.parameters(), lr=params.learning_rate, momentum=params.momentum)
+    # optimizer = getattr(optim, params.optimizer)(net.parameters(), lr=params.learning_rate, momentum=params.momentum)
+    optimizer = torch.optim.Adam(net.parameters(), lr=params.learning_rate, weight_decay=params.weight_decay)
     print_every = int(pipe.length / (2 * params.batch_size))
 
     train = TrainLoop(net, train_loader, optimizer, loss_fn, val_loader=val_loader,
@@ -27,7 +28,7 @@ def experiment(args):
     train.fit(params.num_epochs)
 
     if hasattr(params, "out_path"):
-        torch.save(net.state_dict(), params.out_path)
+        torch.save(net, params.out_path)
 
 
 if __name__ == "__main__":
